@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "poornima",
+      "full_name": "Poornima",
+      "email": "poornima@edugenie.local",
+      "password_hash": "3b0dde8a0d032880846efd847c2b6da0910f4fbd849767c202140fd4cc6d9863",
+      "salt": "fb3c98f2afea2fd40fe0ada1f633ebc9",
+      "created_at": "2026-09-30T17:00:00"
+    },
+    {
+      "id": 2,
+      "username": "poornima_dev",
+      "full_name": "poornima",
+      "email": "poornima@yopmail.com",
+      "password_hash": "73c199dfcfe5f412e5293c01372c5afd4bf0aa0cb82cf295bdcc55091f3ece0b",
+      "salt": "1dbf2733f8bfd7bed7b549482483b376",
+      "created_at": "2026-09-30T17:15:00"
+    }
+  ]
+}

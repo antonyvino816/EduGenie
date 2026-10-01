@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduGenie - Learn Smart</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+    <!-- ==========================================
+         TOP NAVIGATION BAR
+         ========================================== -->
+    <header class="navbar">
+        <div class="nav-brand" onclick="navigateTo('home')" style="cursor: pointer;">
+            <span class="brand-icon">✨</span>
+            <div class="brand-text">
+                <span class="brand-title">EduGenie</span>
+               
+            </div>
+        </div>
+        
+        <div class="nav-actions">
+            <!-- Study Mode Pill -->
+            <div class="pill" style="background: #f3f0ff; color: #6c5ce7; font-weight: 600; padding: 7px 15px; border-radius: 20px; font-size: 13.5px;">
+                <i class="fa-solid fa-book-open"></i> Study Mode
+            </div>
+
+            <!-- Gemini API Status Pill -->
+            <div class="status-pill" id="apiStatusPill" onclick="openKeyModal()" title="Configure Gemini API Key" style="display: none;">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">AI Online</span>
+                <i class="fa-solid fa-key ml-1"></i>
+            </div>
+            
+            <!-- User Profile Pill -->
+            <div class="user-pill" id="userPill">
+                <i class="fa-regular fa-circle-user"></i>
+                <span id="userNameDisplay">Hi, Guest 👋</span>
+            </div>
+
+            <!-- Logout Button -->
+            <button type="button" class="btn-logout" id="logoutBtn" onclick="openLogoutModal()" style="display: none;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         MAIN APPLICATION CONTAINER
+         ========================================== -->
+    <main class="main-container" style="max-width: 1080px; margin: 30px auto; padding: 0 20px; width: 100%;">
+
+        <!-- ==========================================
+             VIEW 1: HOME DASHBOARD
+             ========================================== -->
+        <section id="viewHome" class="view-container">
+            <!-- TOP WELCOME BANNER (Shown ONLY upon login on the Home Dashboard) -->
+            <div class="top-welcome-banner" id="topWelcomeBanner" style="display: none;">
+                <div class="welcome-icon">🎉</div>
+                <div class="welcome-text">
+                    <h3>Welcome, <span id="welcomeUserName">Learner</span>!</h3>
+                    <p>Login successful! Choose any card below or select a topic to start learning.</p>
+                </div>
+                <button type="button" class="banner-close" onclick="dismissWelcomeBanner()" title="Dismiss">&times;</button>
+            </div>
+            <div class="hub-header">
+                <h1 class="hub-title">What would you like to do today?</h1>
+                <p class="hub-subtitle">Choose your learning path and let's get started</p>
+            </div>
+
+            <!-- 3 Main Action Cards (Matches User's UI) -->
+            <div class="cards-grid">
+                <!-- Card 1: Read Notes -->
+                <div class="learning-card card-notes">
+                    <div class="card-icon">📘</div>
+                    <h3>Read Notes</h3>
+                    <p>Summaries & key concepts with structured code examples</p>
+                    <button type="button" class="card-btn" onclick="openStudyNotes('java')">
+                        <i class="fa-solid fa-book-bookmark"></i> Open Notes
+                    </button>
+                </div>
+
+                <!-- Card 2: Practice Questions (IndiaBix Style) -->
+                <div class="learning-card card-practice">
+                    <div class="card-icon">🎯</div>
+                    <h3>Practice Questions</h3>
+                    <p>IndiaBix-style adaptive practice drills with instant answer reveal</p>
+                    <button type="button" class="card-btn" onclick="openPracticeQuestions('java')">
+                        <i class="fa-solid fa-bullseye"></i> Practice
+                    </button>
+                </div>
+
+                <!-- Card 3: Quick Revision -->
+                <div class="learning-card card-quiz">
+                    <div class="card-icon">⚡</div>
+                    <h3>Quick Revision</h3>
+                    <p>Test your knowledge in a rapid 5-minute quiz drill</p>
+                    <button type="button" class="card-btn" onclick="openQuickRevision()">
+                        <i class="fa-solid fa-bolt-lightning"></i> Start Quiz
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ==========================================
+             VIEW 2: DEDICATED STUDY NOTES PAGE (Image 3 & 4 Fix)
+             ========================================== -->
+        <section id="viewNotes" class="view-container" style="display: none;">
+            <div class="view-nav-bar">
+                <button type="button" class="btn-back" onclick="navigateTo('home')">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <div style="font-size: 14px; color: #636e72;">
+                    📚 Topic Notes Library
+                </div>
+            </div>
+
+            <!-- Subject Selection Tabs -->
+            <div class="topic-pills-bar">
+                <button type="button" class="topic-pill active" data-topic="java" onclick="loadNotesTopic('java')">
+                    <span>☕</span> Java
+                </button>
+                <button type="button" class="topic-pill" data-topic="python" onclick="loadNotesTopic('python')">
+                    <span>🐍</span> Python
+                </button>
+                <button type="button" class="topic-pill" data-topic="dbms" onclick="loadNotesTopic('dbms')">
+                    <span>🗄️</span> DBMS
+                </button>
+                <button type="button" class="topic-pill" data-topic="os" onclick="loadNotesTopic('os')">
+                    <span>💻</span> Operating Systems
+                </button>
+                <button type="button" class="topic-pill" data-topic="cn" onclick="loadNotesTopic('cn')">
+                    <span>🌐</span> Computer Networks
+                </button>
+            </div>
+
+            <!-- Dynamic Notes Content -->
+            <div id="notesDisplayCard" class="notes-card">
+                <!-- Rendered dynamically by loadNotesTopic -->
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VIEW 3: INDIABIX STYLE PRACTICE QUESTIONS (Images 5 & 6 Fix)
+             ========================================== -->
+        <section id="viewPractice" class="view-container" style="display: none;">
+            <div class="view-nav-bar">
+                <button type="button" class="btn-back" onclick="navigateTo('home')">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <!-- Subject Switcher in Practice view -->
+                <div class="topic-pills-bar" style="margin: 0;">
+                    <button type="button" class="topic-pill active" id="practicePill-java" onclick="switchPracticeTopic('java')">☕ Java</button>
+                    <button type="button" class="topic-pill" id="practicePill-python" onclick="switchPracticeTopic('python')">🐍 Python</button>
+                    <button type="button" class="topic-pill" id="practicePill-dbms" onclick="switchPracticeTopic('dbms')">🗄️ DBMS</button>
+                    <button type="button" class="topic-pill" id="practicePill-os" onclick="switchPracticeTopic('os')">💻 OS</button>
+                    <button type="button" class="topic-pill" id="practicePill-cn" onclick="switchPracticeTopic('cn')">🌐 CN</button>
+                </div>
+            </div>
+
+            <!-- IndiaBix Main Question Card -->
+            <div id="indiabixActiveContainer" class="indiabix-container">
+                <div class="indiabix-header">
+                    <span class="indiabix-badge" id="practiceTopicBadge">☕ Java Practice</span>
+                    <span class="question-tracker" id="practiceTracker">Question 1 of 5</span>
+                </div>
+
+                <!-- Question Text -->
+                <div class="question-text-box">
+                    <div class="question-number" id="practiceQuestionNum">Question 1:</div>
+                    <div class="question-text" id="practiceQuestionText">Loading question...</div>
+                </div>
+
+                <!-- 4 Options (A, B, C, D) -->
+                <div class="options-list" id="practiceOptionsContainer">
+                    <!-- Option cards injected dynamically -->
+                </div>
+
+                <!-- Instant Auto-Revealing Explanation Box -->
+                <div class="indiabix-explanation" id="practiceExplanationBox" style="display: none;">
+                    <div class="explanation-badge-row">
+                        <span class="explanation-badge"><i class="fa-solid fa-lightbulb"></i> Answer & Explanation</span>
+                        <span class="correct-ans-highlight" id="practiceCorrectAnsLabel">Correct Answer: Option A</span>
+                    </div>
+                    <div class="explanation-body" id="practiceExplanationText">
+                        Explanation details will appear here.
+                    </div>
+                </div>
+
+                <!-- Practice Navigation Buttons -->
+                <div class="practice-actions-row">
+                    <button type="button" class="btn-back" id="btnPrevPractice" onclick="prevPracticeQuestion()">
+                        <i class="fa-solid fa-chevron-left"></i> Previous
+                    </button>
+                    <button type="button" class="btn-nav-question" id="btnNextPractice" onclick="nextPracticeQuestion()">
+                        Next Question <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Completed Summary View -->
+            <div id="practiceSummaryCard" class="indiabix-container" style="display: none;">
+                <div class="score-summary-box">
+                    <div class="score-trophy" id="summaryTrophy">🏆</div>
+                    <h2 style="font-size: 26px; color: #2d3436; margin-bottom: 6px;">Practice Session Completed!</h2>
+                    <div class="score-big" id="summaryScoreDisplay">5 / 5</div>
+                    <div class="score-feedback" id="summaryFeedback">Outstanding mastery! You got every question right.</div>
+                    
+                    <div class="score-actions">
+                        <button type="button" class="btn-nav-question" onclick="restartPractice()">
+                            <i class="fa-solid fa-rotate-right"></i> Retake Practice
+                        </button>
+                        <button type="button" class="btn-back" onclick="navigateTo('notes')">
+                            <i class="fa-solid fa-book"></i> Review Notes
+                        </button>
+                        <button type="button" class="btn-back" onclick="navigateTo('home')">
+                            <i class="fa-solid fa-house"></i> Home Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VIEW 4: QUICK REVISION / QUIZ RUNNER
+             ========================================== -->
+        <section id="viewQuiz" class="view-container" style="display: none;">
+            <div class="view-nav-bar">
+                <button type="button" class="btn-back" onclick="navigateTo('home')">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <!-- Subject Switcher in Quiz view -->
+                <div class="topic-pills-bar" style="margin: 0;">
+                    <button type="button" class="topic-pill" id="quizPill-java" onclick="switchQuizTopic('java')">☕ Java</button>
+                    <button type="button" class="topic-pill active" id="quizPill-python" onclick="switchQuizTopic('python')">🐍 Python</button>
+                    <button type="button" class="topic-pill" id="quizPill-dbms" onclick="switchQuizTopic('dbms')">🗄️ DBMS</button>
+                    <button type="button" class="topic-pill" id="quizPill-os" onclick="switchQuizTopic('os')">💻 OS</button>
+                    <button type="button" class="topic-pill" id="quizPill-cn" onclick="switchQuizTopic('cn')">🌐 CN</button>
+                </div>
+            </div>
+
+            <div class="indiabix-container" id="quickRevisionContainer">
+                <!-- Injected dynamically -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         AUTHENTICATION MODAL (Tabs: Login & Sign Up)
+         ========================================== -->
+    <div class="auth-overlay" id="authModal" style="display: none;">
+        <div class="auth-card">
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="auth-sparkle">✨</div>
+                <h2 id="authModalTitle">Welcome to EduGenie</h2>
+                <p id="authModalSubtitle">Sign in or create an account to start learning</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </button>
+                <button type="button" class="auth-tab-btn" id="tabBtnSignup" onclick="switchAuthTab('signup')">
+                    <i class="fa-solid fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <div class="auth-body">
+                <!-- Alert Message -->
+                <div id="authAlert" class="auth-alert"></div>
+
+                <!-- LOGIN FORM -->
+                <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+                    <div class="auth-form-group">
+                        <label for="loginUsername"><i class="fa-regular fa-user"></i> Username or Email</label>
+                        <input type="text" id="loginUsername" placeholder="Enter username or email" required autocomplete="username">
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn">
+                        Login & Start Learning 🚀
+                    </button>
+                    <div class="auth-switch-text">
+                        Don't have an account? <a onclick="switchAuthTab('signup')">Create one here</a>
+                    </div>
+                </form>
+
+                <!-- SIGN UP FORM -->
+                <form id="signupForm" onsubmit="handleSignupSubmit(event)" style="display: none;">
+                    <div class="auth-form-group">
+                        <label for="signupFullName"><i class="fa-regular fa-id-card"></i> Full Name</label>
+                        <input type="text" id="signupFullName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="signupUsername"><i class="fa-regular fa-user"></i> Choose Username</label>
+                        <input type="text" id="signupUsername" placeholder="Choose a username" required autocomplete="username">
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="signupEmail"><i class="fa-regular fa-envelope"></i> Email Address</label>
+                        <input type="email" id="signupEmail" placeholder="Enter email address" required autocomplete="email">
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="signupPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" id="signupPassword" placeholder="At least 4 characters" required autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn">
+                        Create Account & Start Learning 🚀
+                    </button>
+                    <div class="auth-switch-text">
+                        Already have an account? <a onclick="switchAuthTab('login')">Login here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGOUT CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="logoutModal" style="display: none;" onclick="closeLogoutModal(event)">
+        <div class="modal-card" style="max-width: 380px; text-align: center; padding: 28px 24px; border-radius: 24px;" onclick="event.stopPropagation()">
+            <div style="font-size: 42px; margin-bottom: 10px;">👋</div>
+            <h3 style="font-size: 20px; font-weight: 700; color: #2d3436; margin-bottom: 8px;">Are you sure?</h3>
+            <p style="font-size: 14px; color: #636e72; margin-bottom: 24px; line-height: 1.5;">Are you sure you want to log out of your EduGenie account?</p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button type="button" class="btn-ghost" onclick="closeLogoutModal()" style="flex: 1; padding: 11px 16px; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmLogout()" style="flex: 1; padding: 11px 16px; border-radius: 12px; background: #e74c3c; color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(231, 76, 60, 0.25);">
+                    Yes, Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Config Modal -->
+    <div class="modal-overlay" id="keyModal" style="display: none;" onclick="closeKeyModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-key" style="color: #6c5ce7;"></i> Configure Gemini API Key</h3>
+                <button type="button" class="modal-close" onclick="closeKeyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>EduGenie works offline with pre-curated notes & questions. To unlock live AI responses for any question, paste your Google Gemini API key below:</p>
+                <div class="input-group" style="margin-top: 14px;">
+                    <label for="modalApiKeyInput">Gemini API Key:</label>
+                    <input type="password" id="modalApiKeyInput" class="smart-input" placeholder="AIzaSy...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" onclick="closeKeyModal()">Cancel</button>
+                <button type="button" class="btn-primary" onclick="saveApiKeyFromModal()">Save Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>✨ <b>EduGenie</b> — Smart AI-Powered Learning Assistant & Practice Hub</p>
+        <p class="footer-meta">FastAPI Backend • SQLite/JSON Persistence • IndiaBix-Style Drills • Google Gemini Intelligence</p>
+    </footer>
+
+    <!-- Frontend Application Logic -->
+    <script src="static/app.js"></script>
+</body>
+</html>
